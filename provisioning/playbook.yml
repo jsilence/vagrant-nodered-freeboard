@@ -11,9 +11,6 @@
     - name: ensure moquitto mqtt broker is at the latest version
       apt: pkg=mosquitto state=latest update_cache=yes
 
-    - name: ensure supervisord is at the latest version
-      apt: pkg=supervisor state=latest update_cache=yes
-
     # install node.js, npm,  node-red
     - name: ensure nodejs is at the latest version
       apt: pkg=nodejs state=latest
@@ -55,7 +52,6 @@
     - name: install xmpp node
       npm: name=node-red-node-xmpp path=/vagrant/node-red/
 
-
     - npm: name=ntwitter path=/vagrant/node-red/nodes
     - npm: name=oauth path=/vagrant/node-red/nodes
 
@@ -78,13 +74,6 @@
 
     - name: install websocket server component
       npm: name=socket.io path=/vagrant/node-red/nodes
-
-    # use supervisord to autostart node red
-    - name: copy supervisord config to /etc
-      copy: src=supervisord-nodered.conf dest=/etc/supervisor/conf.d/nodered.conf
-
-    - name: start node red with supervisord
-      supervisorctl: name=nodered state=started
 
       # my favourite editor
     - name: ensure emacs24 is at the latest version
