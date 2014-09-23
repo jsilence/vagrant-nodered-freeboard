@@ -1,0 +1,7 @@
+.vagrant
+node-red
+logs
+freeboard
+freenboard-plugins
+
+*~
