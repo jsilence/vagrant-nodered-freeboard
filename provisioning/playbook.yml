@@ -1,0 +1,95 @@
+---
+- hosts: all
+  sudo: True
+  user: vagrant
+  tasks:
+
+    # basics
+    - name: ensure git is at the latest version
+      apt: pkg=git state=latest update_cache=yes
+
+    - name: ensure moquitto mqtt broker is at the latest version
+      apt: pkg=mosquitto state=latest update_cache=yes
+
+    - name: ensure supervisord is at the latest version
+      apt: pkg=supervisor state=latest update_cache=yes
+
+    # install node.js, npm,  node-red
+    - name: ensure nodejs is at the latest version
+      apt: pkg=nodejs state=latest
+    - name: ensure npm is at the latest version
+      apt: pkg=npm state=latest
+    # some npm modules expect nodejs to be called node
+    - name: quick workaround for npm modules expecting nodejs to be node
+      file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
+
+    - name: install node-red from github
+      git: repo=git://github.com/node-red/node-red.git
+           accept_hostkey=yes
+           dest=/vagrant/node-red
+
+    - name: install node-red from local checkout with npm
+      npm: path=/vagrant/node-red
+
+    - npm: name=feedreader path=/vagrant/node-red/
+    - npm: name=js2xmlparser path=/vagrant/node-red/
+    - npm: name=arduino-firmata path=/vagrant/node-red/
+    - npm: name=fs.notify path=/vagrant/node-red/
+    - npm: name=serialport path=/vagrant/node-red/
+    - npm: name=redis path=/vagrant/node-red/
+    - npm: name=mongodb path=/vagrant/node-red/
+
+    - name: copy freeboard enabled settings to the right location
+      copy: src=settings.js dest=/vagrant/node-red/settings.js
+
+    - name: fetch node-red extra nodes from git
+      git: repo=git://github.com/node-red/node-red-nodes.git
+           accept_hostkey=yes
+           dest=/vagrant/node-red/node-red-nodes
+
+    # install some extra nodes
+    - name: install ping node
+      npm: name=node-red-node-ping path=/vagrant/node-red/
+    - name: install leveldb node
+      npm: name=node-red-node-leveldb path=/vagrant/node-red/
+    - name: install xmpp node
+      npm: name=node-red-node-xmpp path=/vagrant/node-red/
+
+
+    - npm: name=ntwitter path=/vagrant/node-red/nodes
+    - npm: name=oauth path=/vagrant/node-red/nodes
+
+    # install freeboard
+    - name: install freeboard.io from git
+      git: repo=git://github.com/Freeboard/freeboard.git
+           accept_hostkey=yes
+           dest=/vagrant/freeboard
+
+    - name: install freeboard.io plugins for websockets from git
+      git: repo=git://github.com/Freeboard/plugins.git
+           accept_hostkey=yes
+           dest=/vagrant/freeboard-plugins
+
+    - name: copy freeboard plugin to the right location
+      copy: src=../freeboard-plugins/datasources/plugin_node.js dest=/vagrant/freeboard/js/freeboard/plugins/
+
+#    - name: copy modified freeboard frontpage to the web root
+#      copy: src=freeboard-websocket-enabled-index.html dest=/vagrant/freeboard/index.html
+
+    - name: install websocket server component
+      npm: name=socket.io path=/vagrant/node-red/nodes
+
+    # use supervisord to autostart node red
+    - name: copy supervisord config to /etc
+      copy: src=supervisord-nodered.conf dest=/etc/supervisor/conf.d/nodered.conf
+
+    - name: start node red with supervisord
+      supervisorctl: name=nodered state=started
+
+      # my favourite editor
+    - name: ensure emacs24 is at the latest version
+      apt: pkg=emacs24-nox state=latest
+
+#    - command: nodejs red.js -v chdir=/vagrant/node-red
+
+  handlers:
