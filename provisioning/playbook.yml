@@ -5,17 +5,14 @@
   tasks:
 
     # basics
-    - name: ensure git is at the latest version
-      apt: pkg=git state=latest update_cache=yes
+    - name: install a couple of required packages
+      apt: pkg={{item}} state=latest update_cache=yes
+      with_items:
+        - git
+        - mosquitto
+        - nodejs
+        - npm
 
-    - name: ensure moquitto mqtt broker is at the latest version
-      apt: pkg=mosquitto state=latest update_cache=yes
-
-    # install node.js, npm,  node-red
-    - name: ensure nodejs is at the latest version
-      apt: pkg=nodejs state=latest
-    - name: ensure npm is at the latest version
-      apt: pkg=npm state=latest
     # some npm modules expect nodejs to be called node
     - name: quick workaround for npm modules expecting nodejs to be node
       file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
@@ -28,13 +25,16 @@
     - name: install node-red from local checkout with npm
       npm: path=/vagrant/node-red
 
-    - npm: name=feedreader path=/vagrant/node-red/
-    - npm: name=js2xmlparser path=/vagrant/node-red/
-    - npm: name=arduino-firmata path=/vagrant/node-red/
-    - npm: name=fs.notify path=/vagrant/node-red/
-    - npm: name=serialport path=/vagrant/node-red/
-    - npm: name=redis path=/vagrant/node-red/
-    - npm: name=mongodb path=/vagrant/node-red/
+    - name: install required npm packages
+      npm: name={{item}} path=/vagrant/node-red/
+      with_items:
+        - feedreader
+        - js2xmlparser
+        - arduino-firmata
+        - fs.notify
+        - serialport
+        - redis
+        - mongodb
 
     - name: copy freeboard enabled settings to the right location
       copy: src=settings.js dest=/vagrant/node-red/settings.js
@@ -44,16 +44,14 @@
            accept_hostkey=yes
            dest=/vagrant/node-red/node-red-nodes
 
-    # install some extra nodes
-    - name: install ping node
-      npm: name=node-red-node-ping path=/vagrant/node-red/
-    - name: install leveldb node
-      npm: name=node-red-node-leveldb path=/vagrant/node-red/
-    - name: install xmpp node
-      npm: name=node-red-node-xmpp path=/vagrant/node-red/
-
-    - npm: name=ntwitter path=/vagrant/node-red/nodes
-    - npm: name=oauth path=/vagrant/node-red/nodes
+    - name: install some extra nodes
+      npm: name={{item}} path=/vagrant/node-red/
+      with_items:
+        - node-red-node-ping
+        - node-red-node-leveldb
+        - node-red-node-xmpp
+        - ntwitter
+        - oauth
 
     # install freeboard
     - name: install freeboard.io from git
