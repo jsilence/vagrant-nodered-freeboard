@@ -12,6 +12,6 @@ Run
 
     vagrant up
 
-Point your browser to [http://localhost:1880/] to see the plain dashboard, to [http://localhost:1880/?load=demo_websocket_counter] to see the websocket counter demo and to [http://localhost:1880/admin/] to access the Node Red configuration interface.
+Point your browser to [http://localhost:1880/](freeboard dashboard) to see the plain dashboard, to [http://localhost:1880/?load=demo_websocket_counter.json](freeboard websocket demo) to see the websocket counter demo and to [http://localhost:1880/admin/](Node Red) to access the Node Red configuration interface.
 
 Uses upstart to start node red application.
