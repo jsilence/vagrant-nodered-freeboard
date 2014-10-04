@@ -71,18 +71,21 @@
 #      copy: src=../freeboard-plugins/datasources/plugin_node.js dest=/vagrant/freeboard/js/freeboard/plugins/
 
     - name: get freeboard websocket plugin from gist
-      get_url: url=https://gist.githubusercontent.com/dceejay/fb47301b759222e05f84/raw/645966d6dc9b7ce3a06783d5aaa09ca6b1ae00fd/wsDataSourcePlugin.js dest=/vagrant/freeboard/js/freeboard/plugins/
+      get_url: url=https://gist.githubusercontent.com/dceejay/fb47301b759222e05f84/raw/645966d6dc9b7ce3a06783d5aaa09ca6b1ae00fd/wsDataSourcePlugin.js dest=/vagrant/freeboard/js/
 
     - name: copy modified freeboard frontpage to the web root
       copy: src=freeboard-websocket-enabled-index.html dest=/vagrant/freeboard/index.html
 
+    - name: copy counter demo dashboard to freeboard dest=/vagrant/freeboard/
+      copy: src=demo_websocket_counter.json
+
     - name: copy nodered upstart configuration
       copy: src=nodered-upstart.conf dest=/etc/init/nodered.conf
 
-      # my favourite editor
-    - name: ensure emacs24 is at the latest version
-      apt: pkg=emacs24-nox state=latest
+    - name: start node red
+      service: name=nodered state=started
 
-#    - command: nodejs red.js -v chdir=/vagrant/node-red
+    - debug: msg="Browse here for websocket counter example dashboard: http://localhost:11880/?load=demo_websocket_counter.json"
+    - debug: msg="Browse here for node red configuration editor: http://localhost:11880/admin"
 
   handlers:
