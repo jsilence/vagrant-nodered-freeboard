@@ -11,14 +11,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "ubuntu/trusty64"
-#  config.vm.provision :shell, :path => "bootstrap.sh"
-  config.vm.network :forwarded_port, host: 8088, guest: 80
-  config.vm.network :forwarded_port, host: 11880, guest: 1880
+  config.vm.network :forwarded_port, host: 1880, guest: 1880
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
 #    ansible.verbose = "vvv"
-
   end
 
   # Disable automatic box update checking. If you disable this, then

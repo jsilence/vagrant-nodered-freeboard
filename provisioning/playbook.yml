@@ -85,7 +85,7 @@
     - name: start node red
       service: name=nodered state=started
 
-    - debug: 'msg=Browse here for websocket counter example dashboard: http://localhost:11880/?load=demo_websocket_counter.json '
-    - debug: 'msg=Browse here for node red configuration editor: http://localhost:11880/admin '
+    - debug: 'msg=Browse here for websocket counter example dashboard: http://localhost:1880/?load=demo_websocket_counter.json '
+    - debug: 'msg=Browse here for node red configuration editor: http://localhost:1880/admin '
 
   handlers:
