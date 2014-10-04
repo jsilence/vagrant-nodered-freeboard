@@ -53,25 +53,31 @@
         - ntwitter
         - oauth
 
+    - name: copy demo flows to nore red directory
+      copy: src=flows.json dest=/vagrant/node-red/
+
     # install freeboard
     - name: install freeboard.io from git
       git: repo=git://github.com/Freeboard/freeboard.git
            accept_hostkey=yes
            dest=/vagrant/freeboard
 
-    - name: install freeboard.io plugins for websockets from git
-      git: repo=git://github.com/Freeboard/plugins.git
-           accept_hostkey=yes
-           dest=/vagrant/freeboard-plugins
+#    - name: install freeboard.io plugins for websockets from git
+#      git: repo=git://github.com/Freeboard/plugins.git
+#           accept_hostkey=yes
+#           dest=/vagrant/freeboard-plugins
 
-    - name: copy freeboard plugin to the right location
-      copy: src=../freeboard-plugins/datasources/plugin_node.js dest=/vagrant/freeboard/js/freeboard/plugins/
+#    - name: copy freeboard plugin to the right location
+#      copy: src=../freeboard-plugins/datasources/plugin_node.js dest=/vagrant/freeboard/js/freeboard/plugins/
 
-#    - name: copy modified freeboard frontpage to the web root
-#      copy: src=freeboard-websocket-enabled-index.html dest=/vagrant/freeboard/index.html
+    - name: get freeboard websocket plugin from gist
+      get_url: url=https://gist.githubusercontent.com/dceejay/fb47301b759222e05f84/raw/645966d6dc9b7ce3a06783d5aaa09ca6b1ae00fd/wsDataSourcePlugin.js dest=/vagrant/freeboard/js/freeboard/plugins/
 
-    - name: install websocket server component
-      npm: name=socket.io path=/vagrant/node-red/nodes
+    - name: copy modified freeboard frontpage to the web root
+      copy: src=freeboard-websocket-enabled-index.html dest=/vagrant/freeboard/index.html
+
+    - name: copy nodered upstart configuration
+      copy: src=nodered-upstart.conf dest=/etc/init/nodered.conf
 
       # my favourite editor
     - name: ensure emacs24 is at the latest version
