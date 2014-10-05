@@ -2,6 +2,12 @@
 - hosts: all
   sudo: True
   user: vagrant
+
+  vars:
+    http_port: 1880
+    install_path: /vagrant
+    run_as: vagrant
+
   tasks:
 
     # basics
@@ -20,13 +26,13 @@
     - name: install node-red from github
       git: repo=git://github.com/node-red/node-red.git
            accept_hostkey=yes
-           dest=/vagrant/node-red
+           dest={{ install_path }}/node-red
 
     - name: install node-red from local checkout with npm
-      npm: path=/vagrant/node-red
+      npm: path={{ install_path }}/node-red
 
     - name: install required npm packages
-      npm: name={{item}} path=/vagrant/node-red/
+      npm: name={{item}} path={{ install_path }}/node-red/
       with_items:
         - feedreader
         - js2xmlparser
@@ -37,15 +43,15 @@
         - mongodb
 
     - name: copy freeboard enabled settings to the right location
-      copy: src=settings.js dest=/vagrant/node-red/settings.js
+      template: src=settings.js.j2 dest={{ install_path }}/node-red/settings.js
 
     - name: fetch node-red extra nodes from git
       git: repo=git://github.com/node-red/node-red-nodes.git
            accept_hostkey=yes
-           dest=/vagrant/node-red/node-red-nodes
+           dest={{ install_path }}/node-red/node-red-nodes
 
     - name: install some extra nodes
-      npm: name={{item}} path=/vagrant/node-red/
+      npm: name={{item}} path={{ install_path }}/node-red/
       with_items:
         - node-red-node-ping
         - node-red-node-leveldb
@@ -53,39 +59,39 @@
         - ntwitter
         - oauth
 
-    - name: copy demo flows to nore red directory
-      copy: src=flows.json dest=/vagrant/node-red/
+    - name: copy demo flows to node red directory
+      copy: src=flows.json dest={{ install_path }}/node-red/
 
     # install freeboard
     - name: install freeboard.io from git
       git: repo=git://github.com/Freeboard/freeboard.git
            accept_hostkey=yes
-           dest=/vagrant/freeboard
+           dest={{ install_path }}/freeboard
 
 #    - name: install freeboard.io plugins for websockets from git
 #      git: repo=git://github.com/Freeboard/plugins.git
 #           accept_hostkey=yes
-#           dest=/vagrant/freeboard-plugins
+#           dest={{ install_path }}/freeboard-plugins
 
 #    - name: copy freeboard plugin to the right location
-#      copy: src=../freeboard-plugins/datasources/plugin_node.js dest=/vagrant/freeboard/js/freeboard/plugins/
+#      copy: src=../freeboard-plugins/datasources/plugin_node.js dest={{ install_path }}/freeboard/js/freeboard/plugins/
 
     - name: get freeboard websocket plugin from gist
-      get_url: url=https://gist.githubusercontent.com/dceejay/fb47301b759222e05f84/raw/645966d6dc9b7ce3a06783d5aaa09ca6b1ae00fd/wsDataSourcePlugin.js dest=/vagrant/freeboard/js/
+      get_url: url=https://gist.githubusercontent.com/dceejay/fb47301b759222e05f84/raw/645966d6dc9b7ce3a06783d5aaa09ca6b1ae00fd/wsDataSourcePlugin.js dest={{ install_path }}/freeboard/js/
 
     - name: copy modified freeboard frontpage to the webroot
-      copy: src=freeboard-websocket-enabled-index.html dest=/vagrant/freeboard/index.html
+      copy: src=freeboard-websocket-enabled-index.html dest={{ install_path }}/freeboard/index.html
 
     - name: copy counter demo dashboard to freeboard webroot
-      copy: src=demo_websocket_counter.json dest=/vagrant/freeboard/
+      template: src=demo_websocket_counter.json.j2 dest={{ install_path }}/freeboard/demo_websocket_counter.json
 
     - name: copy nodered upstart configuration
-      copy: src=nodered-upstart.conf dest=/etc/init/nodered.conf
+      template: src=nodered-upstart.conf.j2 dest=/etc/init/nodered.conf
 
     - name: start node red
       service: name=nodered state=started
 
-    - debug: 'msg=Browse here for websocket counter example dashboard: http://localhost:1880/?load=demo_websocket_counter.json '
-    - debug: 'msg=Browse here for node red configuration editor: http://localhost:1880/admin '
+    - debug: "msg=Browse here for websocket counter example dashboard: http://localhost:{{ http_port }}/?load=demo_websocket_counter.json "
+    - debug: "msg=Browse here for node red configuration editor: http://localhost:{{ http_port }}/admin "
 
   handlers:
