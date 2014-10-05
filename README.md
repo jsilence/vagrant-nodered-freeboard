@@ -12,12 +12,6 @@ Run
 
     vagrant up
 
-Point your browser to [http://localhost:11880/] to see the dashboard and to [http://localhost:11880/admin/] to access the Node Red configuration interface.
+Point your browser to [freeboard dashboard](http://localhost:1880/) to see the plain dashboard, to [freeboard websocket demo](http://localhost:1880/?load=demo_websocket_counter.json) to see the websocket counter demo and to [Node Red](http://localhost:1880/admin/) to access the Node Red configuration interface.
 
-## Issues / ToDos
-
-Websockets are not working on the freeboard side. Trying to get it running with socket.io.
-
-Make both Node Red and freebard load a preconfigured workflow and dashboard
-
-Node Red has to be started manually. Configure supervisord to start Node Red when the VM starts.
+Uses upstart to start node red application.
