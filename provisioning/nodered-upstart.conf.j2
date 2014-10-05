@@ -8,10 +8,10 @@ respawn
 respawn limit 20 5
 
 script
-    export HOME="/vagrant/node-red/"
-    chdir /vagrant/node-red/
+    export HOME="{{ install_path }}/node-red/"
+    chdir {{ install_path }}/node-red/
     echo $$ > /var/run/nodered.pid
-    exec sudo -u vagrant /usr/bin/node /vagrant/node-red/red.js >> /var/log/nodered.log 2>&1
+    exec sudo -u {{ run_as }} /usr/bin/node {{ install_path }}/node-red/red.js >> /var/log/nodered.log 2>&1
 end script
 
 pre-start script

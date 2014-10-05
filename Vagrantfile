@@ -18,6 +18,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 #    ansible.verbose = "vvv"
   end
 
+  # more network performance please
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+  end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.

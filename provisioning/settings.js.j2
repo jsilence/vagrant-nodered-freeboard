@@ -15,7 +15,7 @@
  **/
 module.exports = {
     // the tcp port that the Node-RED web server is listening on
-    uiPort: 1880,
+    uiPort: {{ http_port }},
 
     // By default, the Node-RED UI accepts connections on all IPv4 interfaces.
     // The following property can be used to listen on a specific interface. For
@@ -48,7 +48,7 @@ module.exports = {
     // By default, all user data is stored in the Node-RED install directory. To
     // use a different location, the following property can be used
     //userDir: '/home/nol/.node-red/',
-    userDir: '/vagrant/data/',
+    userDir: '{{ install_path }}/data/',
 
     // Node-RED scans the `nodes` directory in the install directory to find nodes.
     // The following property can be used to specify an additional directory to scan.
@@ -77,7 +77,7 @@ module.exports = {
     // following property can be used to identify a directory of static content
     // that should be served at http://localhost:1880/.
     //httpStatic: '/home/nol/node-red-dashboard/',
-    httpStatic: '/vagrant/freeboard/',
+    httpStatic: '{{ install_path }}/freeboard/',
 
     // To password protect the static content, the following property can be used.
     // The password must be an md5 hash  eg.. 5f4dcc3b5aa765d61d8327deb882cf99 ('password')
