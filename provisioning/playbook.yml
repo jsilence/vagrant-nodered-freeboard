@@ -1,16 +1,34 @@
 ---
 - hosts: all
   sudo: True
+
+# setting for Vagrant
   user: vagrant
 
+# setting for a Beaglebone Black
+#  user: debian
+#  remote_user: debian
+
   vars:
+# settings for Vagrant Box
+    platform: vagrant
+    startup_method: upstart
+    server_name: localhost
     http_port: 1880
     install_path: /vagrant
     run_as: vagrant
 
+# settings for a Beaglebone Black
+# connect your BBB as described here: http://beagleboard.org/getting-started
+#    platform: beaglebone-black
+#    startup_method: systemd
+#    server_name: 192.168.7.2
+#    http_port: 1880
+#    install_path: /opt/nodered
+#    run_as: srv-node-red
+
   tasks:
 
-    # basics
     - name: install a couple of required packages
       apt: pkg={{item}} state=latest update_cache=yes
       with_items:
@@ -56,8 +74,16 @@
         - node-red-node-ping
         - node-red-node-leveldb
         - node-red-node-xmpp
+        - node-red-node-suncalc
         - ntwitter
         - oauth
+
+    - name: install Beaglebone Black node
+      npm: name={{item}} path={{ install_path }}/node-red/
+      with_items:
+        - node-red-node-beaglebone
+        - bonescript
+      when: platform == "beaglebone-black"
 
     - name: copy demo flows to node red directory
       copy: src=flows.json dest={{ install_path }}/node-red/
@@ -85,13 +111,24 @@
     - name: copy counter demo dashboard to freeboard webroot
       template: src=demo_websocket_counter.json.j2 dest={{ install_path }}/freeboard/demo_websocket_counter.json
 
+    - name: create service user if not existent
+      user: name={{ run_as }} createhome=no shell=/usr/sbin/nologin
+
+    - name: set ownership of the node red directory to the system user
+      file: path={{ install_path }} owner={{ run_as }} group={{ run_as }} recurse=yes
+
     - name: copy nodered upstart configuration
       template: src=nodered-upstart.conf.j2 dest=/etc/init/nodered.conf
+      when: startup_method == "upstart"
+
+    - name: copy nodered systemd configuration
+      template: src=nodered-systemd.service.j2 dest=/etc/systemd/system/nodered.service
+      when: startup_method == "systemd"
 
     - name: start node red
       service: name=nodered state=started
 
-    - debug: "msg=Browse here for websocket counter example dashboard: http://localhost:{{ http_port }}/?load=demo_websocket_counter.json "
-    - debug: "msg=Browse here for node red configuration editor: http://localhost:{{ http_port }}/admin "
+    - debug: "msg=Browse here for websocket counter example dashboard: http://{{ server_name }}:{{ http_port }}/?load=demo_websocket_counter.json "
+    - debug: "msg=Browse here for node red configuration editor: http://{{ server_name }}:{{ http_port }}/admin "
 
   handlers:
