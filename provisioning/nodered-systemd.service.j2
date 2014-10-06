@@ -1,0 +1,13 @@
+[Service]
+ExecStart=/usr/bin/node {{ install_path }}/node-red/red.js
+Restart=always
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nodered
+User={{ run_as }}
+Group={{ run_as }}
+Environment=NODE_ENV=production
+WorkingDirectory={{ install_path }}/node-red/
+
+[Install]
+WantedBy=multi-user.target
