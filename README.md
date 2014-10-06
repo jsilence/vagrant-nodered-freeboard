@@ -30,4 +30,4 @@ Run
 
     ansible-playbook -i ../inventory provisioning/playbook.yml
 
-This takes a while. If everything went ok Node Red should be available [here](http://localhost:1880/admin/). This setup was tested with a BBB that had already been in use. If you run into any problems please leave a description in the issues.
+This takes a while. If everything went ok Node Red should be available [here](http://192.168.7.2:1880/admin/). This setup was tested with a BBB that had already been in use. If you run into any problems please leave a description in the issues.
