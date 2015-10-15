@@ -44,6 +44,7 @@
     - name: install node-red from github
       git: repo=git://github.com/node-red/node-red.git
            accept_hostkey=yes
+           force=yes
            dest={{ install_path }}/node-red
 
     - name: install node-red from local checkout with npm
@@ -66,6 +67,7 @@
     - name: fetch node-red extra nodes from git
       git: repo=git://github.com/node-red/node-red-nodes.git
            accept_hostkey=yes
+           force=yes
            dest={{ install_path }}/node-red/node-red-nodes
 
     - name: install some extra nodes
@@ -92,11 +94,13 @@
     - name: install freeboard.io from git
       git: repo=git://github.com/Freeboard/freeboard.git
            accept_hostkey=yes
+           force=yes
            dest={{ install_path }}/freeboard
 
 #    - name: install freeboard.io plugins for websockets from git
 #      git: repo=git://github.com/Freeboard/plugins.git
 #           accept_hostkey=yes
+#           force=yes
 #           dest={{ install_path }}/freeboard-plugins
 
 #    - name: copy freeboard plugin to the right location
